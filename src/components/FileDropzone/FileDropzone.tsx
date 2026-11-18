@@ -21,6 +21,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
   onClearError,
   customValidator,
   value,
+  error: externalError,
   title,
   subtitle,
   hint,
@@ -33,7 +34,24 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(value ?? null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [error, setError] = useState<FileValidationError | null>(null);
+  const [internalError, setInternalError] = useState<FileValidationError | null>(null);
+
+  // Synchronize active error (external prop takes precedence if provided)
+  const activeError: FileValidationError | null = React.useMemo(() => {
+    if (externalError === undefined) {
+      return internalError;
+    }
+    if (!externalError) {
+      return null;
+    }
+    if (typeof externalError === 'string') {
+      return {
+        code: 'CUSTOM_VALIDATION_ERROR',
+        message: externalError,
+      };
+    }
+    return externalError;
+  }, [externalError, internalError]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
@@ -61,7 +79,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
 
   // Clear current error
   const clearError = useCallback(() => {
-    setError(null);
+    setInternalError(null);
     onClearError?.();
   }, [onClearError]);
 
@@ -124,7 +142,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
         const validationError = validateFile(file);
 
         if (validationError) {
-          setError(validationError);
+          setInternalError(validationError);
           onError?.(validationError);
           return;
         }
@@ -137,7 +155,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
             code: 'TOO_MANY_FILES',
             message: `You can only select up to ${maxFiles} files at once.`,
           };
-          setError(limitError);
+          setInternalError(limitError);
           onError?.(limitError);
           return;
         }
@@ -147,7 +165,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
           const file = fileList[i];
           const validationError = validateFile(file);
           if (validationError) {
-            setError(validationError);
+            setInternalError(validationError);
             onError?.(validationError);
             return;
           }
@@ -428,7 +446,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
           className={`
             ${styles.dropzone}
             ${isDragging ? styles.dragging : ''}
-            ${error ? styles.hasError : ''}
+            ${activeError ? styles.hasError : ''}
             ${disabled ? styles.disabled : ''}
           `}
           onClick={triggerBrowse}
@@ -495,7 +513,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
       )}
 
       {/* Error Message Alert */}
-      {error && (
+      {activeError && (
         <div className={styles.errorAlert} role="alert" aria-live="assertive">
           <svg
             className={styles.errorIcon}
@@ -510,7 +528,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
-          <p className={styles.errorMessage}>{error.message}</p>
+          <p className={styles.errorMessage}>{activeError.message}</p>
           <button
             type="button"
             className={styles.errorDismissBtn}

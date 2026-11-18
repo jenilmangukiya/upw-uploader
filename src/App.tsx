@@ -16,6 +16,7 @@ type DemoPreset = 'pdf-default' | 'images' | 'custom-validator';
 export function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preset, setPreset] = useState<DemoPreset>('pdf-default');
+  const [currentError, setCurrentError] = useState<FileValidationError | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>(undefined);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [eventLogs, setEventLogs] = useState<EventLogItem[]>([]);
@@ -30,6 +31,7 @@ export function App() {
   // Handlers passed into component callbacks
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
+    setCurrentError(null);
     setUploadStatus('idle');
     setUploadProgress(undefined);
     logEvent('select', 'onFileSelect', `${file.name} (${formatFileSize(file.size)})`);
@@ -37,16 +39,19 @@ export function App() {
 
   const handleFileRemove = (file: File | null) => {
     setSelectedFile(null);
+    setCurrentError(null);
     setUploadStatus('idle');
     setUploadProgress(undefined);
     logEvent('remove', 'onFileRemove', file ? file.name : 'Cleared');
   };
 
   const handleError = (err: FileValidationError) => {
+    setCurrentError(err);
     logEvent('error', 'onError', `[${err.code}] ${err.message}`);
   };
 
   const handleClearError = () => {
+    setCurrentError(null);
     logEvent('clear', 'onClearError', 'User dismissed or resolved error state');
   };
 
@@ -156,6 +161,7 @@ export function DocumentUploadForm() {
               onClick={() => {
                 setPreset('pdf-default');
                 setSelectedFile(null);
+                setCurrentError(null);
                 setUploadStatus('idle');
               }}
             >
@@ -167,6 +173,7 @@ export function DocumentUploadForm() {
               onClick={() => {
                 setPreset('images');
                 setSelectedFile(null);
+                setCurrentError(null);
                 setUploadStatus('idle');
               }}
             >
@@ -178,6 +185,7 @@ export function DocumentUploadForm() {
               onClick={() => {
                 setPreset('custom-validator');
                 setSelectedFile(null);
+                setCurrentError(null);
                 setUploadStatus('idle');
               }}
             >
@@ -191,6 +199,7 @@ export function DocumentUploadForm() {
               accept={['application/pdf']}
               maxSizeBytes={10 * 1024 * 1024} // 10 MB
               value={selectedFile}
+              error={currentError}
               uploadProgress={uploadProgress}
               onFileSelect={handleFileSelect}
               onFileRemove={handleFileRemove}
@@ -207,6 +216,7 @@ export function DocumentUploadForm() {
               subtitle="Drag & drop PNG, JPG, or WEBP here"
               hint="Images up to 5 MB"
               value={selectedFile}
+              error={currentError}
               uploadProgress={uploadProgress}
               onFileSelect={handleFileSelect}
               onFileRemove={handleFileRemove}
@@ -228,6 +238,7 @@ export function DocumentUploadForm() {
                 return null;
               }}
               value={selectedFile}
+              error={currentError}
               uploadProgress={uploadProgress}
               onFileSelect={handleFileSelect}
               onFileRemove={handleFileRemove}
@@ -243,7 +254,10 @@ export function DocumentUploadForm() {
               <button
                 type="button"
                 className="quickTestBtn success"
-                onClick={() => triggerMockFile('annual-financial-report-2026.pdf', 3.4 * 1024 * 1024, 'application/pdf')}
+                onClick={() => {
+                  setCurrentError(null);
+                  triggerMockFile('annual-financial-report-2026.pdf', 3.4 * 1024 * 1024, 'application/pdf');
+                }}
               >
                 ✓ Mock 3.4 MB PDF
               </button>
@@ -252,7 +266,6 @@ export function DocumentUploadForm() {
                 className="quickTestBtn danger"
                 onClick={() => {
                   const oversize = createMockFile('huge-portfolio-archive.pdf', 14.5 * 1024 * 1024, 'application/pdf');
-                  // Trigger validation error via onError
                   handleError({
                     code: 'FILE_TOO_LARGE',
                     message: `"${oversize.name}" exceeds the maximum allowed size of 10 MB (actual size: 14.5 MB).`,

@@ -88,6 +88,11 @@ export interface FileDropzoneProps {
   value?: File | null;
 
   /**
+   * External error to display (e.g. from an API response or external check).
+   */
+  error?: string | FileValidationError | null;
+
+  /**
    * Main heading label inside the dropzone.
    * Default: `"Drag & drop your PDF here"`
    */
