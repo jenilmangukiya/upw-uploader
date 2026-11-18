@@ -1,0 +1,402 @@
+/* ==========================================================================
+   FileDropzone Component Styles
+   Fully encapsulated with customizable CSS variables
+   ========================================================================== */
+
+:root {
+  --fdz-primary: #3b82f6;
+  --fdz-primary-hover: #2563eb;
+  --fdz-primary-light: #eff6ff;
+  --fdz-primary-border: #bfdbfe;
+  
+  --fdz-bg-default: #ffffff;
+  --fdz-bg-hover: #f8fafc;
+  --fdz-bg-drag: #f0f7ff;
+  
+  --fdz-border-default: #cbd5e1;
+  --fdz-border-hover: #94a3b8;
+  --fdz-border-drag: #3b82f6;
+  --fdz-border-error: #ef4444;
+
+  --fdz-text-title: #0f172a;
+  --fdz-text-body: #64748b;
+  --fdz-text-muted: #94a3b8;
+
+  --fdz-danger-bg: #fef2f2;
+  --fdz-danger-border: #fecaca;
+  --fdz-danger-text: #b91c1c;
+
+  --fdz-success-color: #10b981;
+  --fdz-radius: 12px;
+  --fdz-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.container {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.container *,
+.container *::before,
+.container *::after {
+  box-sizing: border-box;
+}
+
+/* ----------------- Drop Zone ----------------- */
+.dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 24px;
+  border: 2px dashed var(--fdz-border-default);
+  border-radius: var(--fdz-radius);
+  background-color: var(--fdz-bg-default);
+  cursor: pointer;
+  transition: var(--fdz-transition);
+  outline: none;
+  text-align: center;
+  user-select: none;
+}
+
+.dropzone:hover:not(.disabled) {
+  border-color: var(--fdz-border-hover);
+  background-color: var(--fdz-bg-hover);
+  transform: translateY(-1px);
+}
+
+.dropzone:focus-visible {
+  border-color: var(--fdz-primary);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* Dragging active state */
+.dropzone.dragging {
+  border-color: var(--fdz-border-drag);
+  border-style: solid;
+  background-color: var(--fdz-bg-drag);
+  box-shadow: 0 8px 24px -4px rgba(59, 130, 246, 0.12);
+  transform: scale(1.01);
+}
+
+/* Error state on dropzone */
+.dropzone.hasError {
+  border-color: var(--fdz-border-error);
+}
+
+/* Disabled state */
+.dropzone.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+/* ----------------- Content Elements ----------------- */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--fdz-primary-light);
+  color: var(--fdz-primary);
+  margin-bottom: 16px;
+  transition: var(--fdz-transition);
+}
+
+.dropzone:hover:not(.disabled) .iconWrapper,
+.dropzone.dragging .iconWrapper {
+  transform: scale(1.08);
+  background-color: #dbeafe;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--fdz-text-title);
+  line-height: 1.4;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--fdz-text-body);
+}
+
+.browseLink {
+  color: var(--fdz-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.browseLink:hover {
+  color: var(--fdz-primary-hover);
+}
+
+.hint {
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--fdz-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f8fafc;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+/* ----------------- Selected File Preview Card ----------------- */
+.previewCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 16px 18px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--fdz-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: var(--fdz-transition);
+  gap: 14px;
+}
+
+.previewCard:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.previewBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 52px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(239, 68, 68, 0.25);
+}
+
+.badgeIcon {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 2px;
+}
+
+.fileDetails {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fileNameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fileName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--fdz-text-title);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.fileMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--fdz-text-body);
+}
+
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--fdz-success-color);
+  font-weight: 500;
+  font-size: 0.78rem;
+}
+
+.actionButtonGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.changeBtn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--fdz-transition);
+}
+
+.changeBtn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.removeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: var(--fdz-transition);
+}
+
+.removeBtn:hover:not(:disabled) {
+  background-color: var(--fdz-danger-bg);
+  color: var(--fdz-danger-text);
+  border-color: var(--fdz-danger-border);
+}
+
+.removeBtn:focus-visible,
+.changeBtn:focus-visible {
+  outline: 2px solid var(--fdz-primary);
+  outline-offset: 2px;
+}
+
+/* ----------------- Multiple Files List ----------------- */
+.multipleFilesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.multipleFilesHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--fdz-text-title);
+}
+
+/* ----------------- Progress Bar ----------------- */
+.progressContainer {
+  margin-top: 6px;
+  width: 100%;
+}
+
+.progressTrack {
+  height: 5px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 4px;
+  transition: width 0.25s ease-out;
+}
+
+.progressLabel {
+  margin-top: 3px;
+  font-size: 0.72rem;
+  color: var(--fdz-text-muted);
+  text-align: right;
+}
+
+/* ----------------- Error Alert ----------------- */
+.errorAlert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  background-color: var(--fdz-danger-bg);
+  border: 1px solid var(--fdz-danger-border);
+  border-radius: 8px;
+  color: var(--fdz-danger-text);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.errorIcon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.errorMessage {
+  flex: 1;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.errorDismissBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--fdz-danger-text);
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorDismissBtn:hover {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
